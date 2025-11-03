@@ -1,0 +1,24 @@
+(function executeRule(current, previous /*null on insert*/) {
+
+    // GlideRecord object for Family Expenses
+    var familyGR = new GlideRecord('u_family_expenses');
+
+    // Check if a record already exists for the same date
+    familyGR.addQuery('u_date', current.u_date);
+    familyGR.query();
+
+    if (familyGR.next()) {
+        // Update total amount and expense details
+        familyGR.u_amount += current.u_expense;
+        familyGR.u_expense_details += " > " + current.u_comments + ": Rs." + current.u_expense + "/-";
+        familyGR.update();
+    } else {
+        // Insert a new Family Expenses record
+        var newFamilyGR = new GlideRecord('u_family_expenses');
+        newFamilyGR.u_date = current.u_date;
+        newFamilyGR.u_amount = current.u_expense;
+        newFamilyGR.u_expense_details = "> " + current.u_comments + ": Rs." + current.u_expense + "/-";
+        newFamilyGR.insert();
+    }
+
+})(current, previous);
